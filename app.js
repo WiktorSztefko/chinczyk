@@ -4,12 +4,16 @@ const PORT = 3000;
 var path = require("path")
 var mysql = require("mysql")
 
+var dotenv=require("dotenv")
+dotenv.config()
+
+
 
 var con = mysql.createConnection({
-    host: "	mysql.ct8.pl",
-    user: "	m22186_root",
-    password: "Zaq!2wsx",
-    database:"m22186_chinczyk",
+    host: process.dotenv.HOST,
+    user: process.dotenv.USER,
+    password: process.dotenv.PASSWORD,
+    database: process.dotenv.DATABASE
 });
 
 // con.connect(function (err) {
