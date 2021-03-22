@@ -4,16 +4,16 @@ const PORT = 3000;
 var path = require("path")
 var mysql = require("mysql")
 
-var dotenv=require("dotenv")
+var dotenv = require("dotenv")
 dotenv.config()
 
 
 
 var con = mysql.createConnection({
-    host: process.dotenv.HOST,
-    user: process.dotenv.USER,
-    password: process.dotenv.PASSWORD,
-    database: process.dotenv.DATABASE
+    host: process.env.HOST,
+    user: process.env.USERLOGIN,
+    password: process.env.PASSWORD,
+    database: process.env.DATABASE
 });
 
 // con.connect(function (err) {
@@ -24,7 +24,10 @@ var con = mysql.createConnection({
 
 var bodyParser = require("body-parser")
 
+con.connect(function (err) {
+    if (err) throw err;
 
+})
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -32,7 +35,7 @@ app.get("/", function (req, res) {
     console.log("get")
     res.sendFile(path.join(__dirname + "/static/index.html"))
 })
-app.post("/login", function (req, res) {
+app.post("/login", async function (req, res) {
     console.log(req.body.name)
     let login = req.body.name
 
@@ -45,21 +48,22 @@ app.post("/login", function (req, res) {
     //     addToLastGame(login)
     // }
 
-    let thisLoginName = getLastRecord()
+    let thisLoginName = await getLastRecord()
+    console.log(thisLoginName)
 
     res.send(JSON.stringify(thisLoginName))
 
 })
 
-function getLastRecord(){
-    con.connect(function(err) {
-        if (err) throw err;
-        con.query("SELECT * FROM games", function (err, result, fields) {
-          if (err) throw err;
-          console.log(result);
-          return result
-        });
-      });
+function getLastRecord() {
+    return new Promise((resolve, reject) => {
+        con.query("SELECT * FROM games ORDER BY id DESC LIMIT 1", function (err, result, fields) {
+            if (err) throw err;
+            result[0].data = JSON.parse(result[0].data)
+            console.log(result[0]);
+            resolve(result[0])
+        })
+    });
 }
 
 app.use(express.static("static"))
