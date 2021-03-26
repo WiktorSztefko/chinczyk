@@ -1,0 +1,46 @@
+body{
+    margin: 0;
+    background-color: rgb(71, 68, 68);
+}
+.header{
+    padding: 30px 60px;
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: row-reverse;
+    background: rgb(163, 155, 155);
+
+}
+.playerNick{
+    padding: 15px 30px;
+    margin: 0 50px;
+    border-radius: 25px;
+    max-width: 200px;
+    min-width: 50px;
+    text-align: center;
+
+}
+.me{
+    border: 5px solid purple;
+}
+.switchButton{
+    background-color:rgb(247, 242, 242);
+    width: 40px;
+    height: 20px;
+    position: relative;
+    border-radius: 10px;
+
+}
+.switchDot{
+    position: absolute;
+    left:0;
+    background: rgb(41, 39, 39);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    transition: all 0.2s linear ;
+}
+.switchButtonOn .switchDot{
+
+    background: greenyellow;
+    left: 20px
+}

@@ -2,34 +2,20 @@ var express = require("express");
 var app = express()
 const PORT = 3000;
 var path = require("path")
-var mysql = require("mysql")
+
 
 var dotenv = require("dotenv")
 dotenv.config()
 
+let Game=require("./serverFiles/game.js");
 
-
-var con = mysql.createConnection({
-    host: process.env.HOST,
-    user: process.env.USERLOGIN,
-    password: process.env.PASSWORD,
-    database: process.env.DATABASE
-});
-
-// con.connect(function (err) {
-//     if (err) throw err;
-//     console.log("Connected!");
-// });
-
+var game= new Game(process.env.HOST,process.env.USERLOGIN,process.env.PASSWORD,process.env.DATABASE)
 
 var bodyParser = require("body-parser")
 
-con.connect(function (err) {
-    if (err) throw err;
 
-})
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.get("/", function (req, res) {
     console.log("get")
@@ -39,32 +25,34 @@ app.post("/login", async function (req, res) {
     console.log(req.body.name)
     let login = req.body.name
 
-    // let lastRecord = getLastRecord()
-
-    // if (lastRecord.player4) {
-    //     createNewGame()
-    // }
-    // else {
-    //     addToLastGame(login)
-    // }
-
-    let thisLoginName = await getLastRecord()
-    console.log(thisLoginName)
-
-    res.send(JSON.stringify(thisLoginName))
+    let thisLoginGame = await game.login(login)
+    res.send(JSON.stringify(thisLoginGame))
 
 })
+app.post("/check", async function (req, res) {
+  
+    let id = req.body.id
 
-function getLastRecord() {
-    return new Promise((resolve, reject) => {
-        con.query("SELECT * FROM games ORDER BY id DESC LIMIT 1", function (err, result, fields) {
-            if (err) throw err;
-            result[0].data = JSON.parse(result[0].data)
-            console.log(result[0]);
-            resolve(result[0])
-        })
-    });
-}
+    let userGame = await game.getGameFromId(id)
+    res.send(JSON.stringify(userGame))
+})
+
+app.post("/changestate", async function (req, res) {
+  
+    let id = req.body.id
+    let color=req.body.color
+    let userGame= await game.changeUserReadyState(id,color)
+    res.send(JSON.stringify(userGame))
+})
+
+
+
+
+// function createNewGame(login) {
+
+// }
+
+
 
 app.use(express.static("static"))
 
