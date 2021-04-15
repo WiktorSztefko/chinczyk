@@ -1,5 +1,5 @@
 
-import Game from "/js/Game.js"
+import Game from "/js/GameKlient.js"
 let game = new Game()
 function init() {
     let button = document.getElementById("loginButton")

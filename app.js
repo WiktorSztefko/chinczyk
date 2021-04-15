@@ -7,11 +7,11 @@ var path = require("path")
 var dotenv = require("dotenv")
 dotenv.config()
 
-let Game=require("./serverFiles/game.js");
+let Game=require("./serverFiles/gameServer.js");
 
 var game= new Game(process.env.HOST,process.env.USERLOGIN,process.env.PASSWORD,process.env.DATABASE)
 
-var bodyParser = require("body-parser")
+//var bodyParser = require("body-parser")
 
 
 
@@ -45,13 +45,13 @@ app.post("/changestate", async function (req, res) {
     res.send(JSON.stringify(userGame))
 })
 
-
-
-
-// function createNewGame(login) {
-
-// }
-
+app.post("/changeStatus", async function (req, res) {
+  
+   console.log(req.body.obj)
+   await game.saveGameInDataBase(req.body.obj)
+   let userGame = await game.getGameFromId(req.body.obj.id)
+    res.send(JSON.stringify(userGame))
+})
 
 
 app.use(express.static("static"))
