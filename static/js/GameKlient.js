@@ -767,7 +767,7 @@ export default class Game {
         kostka.setAttribute("id", "kostka")
 
         let img = document.createElement("img")
-        img.src = `../img/${move}.png`
+        img.src = `../img/${move}.PNG`
         kostka.appendChild(img)
 
         if (document.getElementById("kostka") == null) {
