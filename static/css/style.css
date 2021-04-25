@@ -22,7 +22,7 @@ body{
 .prompt{
     width: 500px;
     height: 200px;
-    margin: 500px auto 0;
+    margin: 350px auto 0;
     background: rgb(70, 70, 70);
     display: flex;
     justify-content: center;
@@ -78,7 +78,6 @@ input{
 #container{
     display: flex;
     margin: 0 auto;
-    margin-top: 200px;
     width: 1200px;
 }
 #kostka img{

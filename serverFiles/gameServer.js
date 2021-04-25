@@ -5,7 +5,7 @@ module.exports = class Game {
         this.user = user
         this.password = password
         this.database = database
-        this.colors = ["blue", "green", "yellow", "red"]
+        this.colors = ["red", "blue", "yellow", "green"]
         this.init()
     }
 
@@ -25,11 +25,11 @@ module.exports = class Game {
     async login(login) {
         let lastRecord = await this.getLastRecord()
         console.log("to jest lastRecord: " + JSON.stringify(lastRecord))
-        if (lastRecord.players == undefined || lastRecord.players.red != undefined || lastRecord.started == "1") {
-            console.log("tworzenie nowej gry")
+        if (lastRecord.players == undefined || lastRecord.players.green != undefined || lastRecord.started == "1") {
+           // console.log("tworzenie nowej gry")
             await this.createNewGame(login)
         } else {
-            console.log("dodanie do ostatniej gry")
+            //console.log("dodanie do ostatniej gry")
             await this.addToLastGame(login, lastRecord)
         }
         return await this.getLastRecord()
@@ -56,14 +56,14 @@ module.exports = class Game {
     async createNewGame(login) {
 
         let players = {
-            blue: {
+            red: {
                 nick: login,
                 lastActive: null,
                 status: 0,
             }
         }
         let pawns = {
-            blue: [-1, -2, -3, -4],
+            red: [40, 41, 42, 43],
         }
         await this.createGameInDataBase(players, pawns)
     }
@@ -86,7 +86,7 @@ module.exports = class Game {
     async addToLastGame(login, lastGame) {
         console.log(lastGame)
         lastGame = this.addPlayer(login, lastGame)
-        if (lastGame.players.red != undefined) {
+        if (lastGame.players.green != undefined) {
             lastGame = this.startGame(lastGame)
         }
         await this.saveGameInDataBase(lastGame)
@@ -94,13 +94,17 @@ module.exports = class Game {
 
     addPlayer(login, lastGame) {
         let color
-        if (lastGame.players.green == undefined) {
-            color = "green"
+        let pawns
+        if (lastGame.players.blue == undefined) {
+            color = "blue"
+            pawns = [44, 45, 46, 47]
         } else if (lastGame.players.yellow == undefined) {
             color = "yellow"
+            pawns = [48, 49, 50, 51]
         }
         else {
-            color = "red"
+            color = "green"
+            pawns = [52, 53, 54, 55]
         }
 
         let player = {
@@ -108,7 +112,6 @@ module.exports = class Game {
             lastActive: null,
             status: 0,
         }
-        let pawns = [-1, -2, -3, -4]
 
         lastGame.players[color] = player
         lastGame.pawns[color] = pawns
@@ -143,7 +146,7 @@ module.exports = class Game {
 
                 }
                 else {
-                    console.log("result był pusty")
+                   // console.log("result był pusty")
                     result[0] = {}
                 }
 
@@ -159,7 +162,7 @@ module.exports = class Game {
         for (let key in lastGame.players) {
             lastGame.players[key].status = 2
         }
-        lastGame.players.blue.status = 3
+        lastGame.players.red.status = 3
 
         lastGame.started = "1"
         return lastGame
