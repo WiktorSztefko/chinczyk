@@ -19,7 +19,7 @@ body{
     text-align: center;
 
 }
-.prompt{
+.nickDiv{
     width: 500px;
     height: 200px;
     margin: 350px auto 0;
@@ -45,7 +45,7 @@ input{
     border-radius: 10px;
 
 }
-.switchDot{
+.dot{
     position: absolute;
     left:0;
     background: rgb(255, 0, 0);
@@ -54,7 +54,7 @@ input{
     border-radius: 50%;
     transition: all 0.2s linear ;
 }
-.switchButtonOn .switchDot{
+.switchButtonOn .dot{
 
     background: lime;
     left: 20px

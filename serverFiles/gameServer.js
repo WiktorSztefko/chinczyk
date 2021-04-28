@@ -23,8 +23,8 @@ module.exports = class Game {
     }
 
     async login(login) {
-        let lastRecord = await this.getLastRecord()
-        console.log("to jest lastRecord: " + JSON.stringify(lastRecord))
+        let lastRecord = await this.getLastRecordFromDatabase()
+        //console.log("to jest lastRecord: " + JSON.stringify(lastRecord))
         if (lastRecord.players == undefined || lastRecord.players.green != undefined || lastRecord.started == "1") {
            // console.log("tworzenie nowej gry")
             await this.createNewGame(login)
@@ -32,10 +32,10 @@ module.exports = class Game {
             //console.log("dodanie do ostatniej gry")
             await this.addToLastGame(login, lastRecord)
         }
-        return await this.getLastRecord()
+        return await this.getLastRecordFromDatabase()
     }
 
-    getLastRecord() {
+    getLastRecordFromDatabase() {
 
         return new Promise((resolve, reject) => {
             this.connection.query("SELECT * FROM games ORDER BY id DESC LIMIT 1", function (err, result, fields) {
@@ -47,7 +47,6 @@ module.exports = class Game {
                 }
                 else {
                     result[0] = {}
-
                 }
                 resolve(result[0])
             })
@@ -84,7 +83,7 @@ module.exports = class Game {
     }
 
     async addToLastGame(login, lastGame) {
-        console.log(lastGame)
+        //console.log(lastGame)
         lastGame = this.addPlayer(login, lastGame)
         if (lastGame.players.green != undefined) {
             lastGame = this.startGame(lastGame)
@@ -95,7 +94,7 @@ module.exports = class Game {
     addPlayer(login, lastGame) {
         let color
         let pawns
-        if (lastGame.players.blue == undefined) {
+        if (lastGame.players.blue == undefined) { //lecimy kolejno kolejnych graczy, każdy ma inny kolor i inne pozycje pionków
             color = "blue"
             pawns = [44, 45, 46, 47]
         } else if (lastGame.players.yellow == undefined) {
@@ -121,10 +120,10 @@ module.exports = class Game {
 
     saveGameInDataBase(game) {
 
-        let playersString = JSON.stringify(game.players)
-        let pawnsString = JSON.stringify(game.pawns)
+        let playersGame= JSON.stringify(game.players)
+        let pawnsGame= JSON.stringify(game.pawns)
 
-        let query = `UPDATE games SET players='${playersString}', pawns='${pawnsString}', started=${game.started} WHERE id='${game.id}'`
+        let query = `UPDATE games SET players='${playersGame}', pawns='${pawnsGame}', started=${game.started} WHERE id='${game.id}'`
         return new Promise((resolve, reject) => {
             this.connection.query(query, function (err, result) {
                 if (err) throw err;
@@ -143,13 +142,11 @@ module.exports = class Game {
                 if (result.length > 0 && result[0].players != "") {
                     result[0].pawns = JSON.parse(result[0].pawns)
                     result[0].players = JSON.parse(result[0].players)
-
                 }
                 else {
                    // console.log("result był pusty")
                     result[0] = {}
                 }
-
                 //console.log(result);
                 resolve(result[0])
             })
@@ -157,12 +154,12 @@ module.exports = class Game {
     }
 
     startGame(lastGame) {
-        console.log("start last game:", lastGame)
+        //console.log("start last game:", lastGame)
 
         for (let key in lastGame.players) {
             lastGame.players[key].status = 2
         }
-        lastGame.players.red.status = 3
+        lastGame.players.red.status = 3 //czerwony zaczyna zawsze
 
         lastGame.started = "1"
         return lastGame

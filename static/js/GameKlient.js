@@ -4,12 +4,18 @@ import { plansza } from "./pozycje.js"
 
 
 export default class Game {
-    constructor(obj) {
+    constructor() {
         this.plansza = plansza
+        this.startHelper = true
+        this.currentTime = 30
+        this.wylosowana = ""
+        this.divs = []
+        this.myTurn = false
+        this.interval = ""
         // console.log(this.plansza)
     }
 
-    whoIAm() {
+    whichPlayerIAm() {
         let me
         for (let key in this.obj.players) {
             me = key
@@ -17,24 +23,14 @@ export default class Game {
         return me
     }
 
-
     init(obj) {
         this.id = obj.id
         this.started = obj.started == 1
         this.obj = obj
-        this.startHelper = true
-        this.me = this.whoIAm()
+        this.me = this.whichPlayerIAm()
         this.generateHeader()
-        this.interval = ""
         this.startRequesting()
-        this.currentTime = 30
-        this.oneOrMorePawnsOnBoard = false
-        this.wylosowana = ""
-        this.divs = []
-        this.myTurn = false
-        console.log(this.plansza)
     }
-
 
     sendLogin() {
         let name = document.getElementById("loginInput").value
@@ -44,18 +40,15 @@ export default class Game {
 
             this.postData('/login', { name: name })
                 .then(data => {
-                    //  console.log(data)
-                    let promptElement = document.getElementById("prompt")
-                    promptElement.remove()
+                    let nickDiv = document.getElementById("nickDiv")
+                    nickDiv.remove()
                     this.init(data)
                 });
-
         }
         else {
-            alert("Podaj nick")
+            alert("Podaj poprawny nick")
         }
     }
-
 
     async postData(url = '', data = {}) {
         const response = await fetch(url, {
@@ -84,7 +77,6 @@ export default class Game {
 
                 this.postData('/changeState', { id: this.id, color: this.me })
                     .then(data => {
-                        //console.log(data)
                         this.update(data)
                     });
 
@@ -96,7 +88,7 @@ export default class Game {
             })
 
             let dot = document.createElement("div")
-            dot.className = "switchDot"
+            dot.className = "dot"
             switchButton.appendChild(dot)
             header.appendChild(switchButton)
         }
@@ -123,10 +115,8 @@ export default class Game {
         }
     }
 
-
     startRequesting() {
         this.interval = setInterval(() => {
-            //console.log("request")
             this.postData('/check', { id: this.id })
                 .then(data => {
                     this.update(data)
@@ -139,7 +129,6 @@ export default class Game {
                     this.currentTime = 30
                 }
             }
-
         }, 1000)
     }
 
@@ -152,8 +141,6 @@ export default class Game {
                 let btn = document.getElementsByClassName("switchButton")[0]
                 btn.remove()
                 this.generateContainer()
-
-
             }
 
             this.addUsers(data)
@@ -167,7 +154,6 @@ export default class Game {
                 let bt = document.getElementById("button")
                 if (bt == null) {
                     this.generateKostka()
-
                 }
             }
 
@@ -183,7 +169,6 @@ export default class Game {
 
             if (document.getElementById("green3") != null) {
 
-                //this.divs=[]
                 document.getElementById("red0").position = this.obj.pawns.red[0]
                 if (document.getElementById(`red0`).position > 39) {
                     document.getElementById(`red0`).status = "inHome"
@@ -261,7 +246,7 @@ export default class Game {
 
 
         }
-        else if (this.startHelper && this.me == "green") {
+        else if (this.startHelper && this.me == "green") { //helper dla greena
             this.generateContainer()
             this.startHelper = !this.startHelper
             this.color()
@@ -300,7 +285,6 @@ export default class Game {
         let board = document.createElement("div")
         board.setAttribute("id", "board")
         board.style.background = "url(../img/board.png)"
-
 
         container.appendChild(board)
         document.body.appendChild(container)
@@ -411,7 +395,7 @@ export default class Game {
                                 maybeNewPosition = maybeNewPosition - 39 - 1 //-1 bo tablica od 0
                             }
 
-                            let pink = document.createElement("div")
+                            let pink = document.createElement("div") //różowy placek dla podpowiedzi
                             pink.id = "pink"
                             pink.style.width = 20 + "px"
                             pink.style.height = 20 + "px"
@@ -431,7 +415,7 @@ export default class Game {
                 div.addEventListener("click", () => {
 
                     if (this.myTurn == true) {
-                        console.log(div.status)
+                       // console.log(div.status)
                         if (div.status == "inGame") {
                             this.move(div)
                             // console.log("game")
@@ -446,7 +430,6 @@ export default class Game {
             board.appendChild(div)
         }
     }
-
 
     color() {
 
@@ -466,54 +449,20 @@ export default class Game {
         let index = div.id
         index = index.substr(-1, 1)
 
-        //console.log(this.divs)
-        // for (let el of this.divs) {
-        //     console.log(el.position)
-        // }
         let newField
         let newHomePosition
 
         if (div.status == "inHome") {
             if (this.me == "blue") {
-                //     div.style.top = this.plansza[10].y + "px"
-                //     div.style.left = this.plansza[10].x + "px"
-                //     this.obj.pawns[this.me][index] = 10
-                //    // this.oneOrMorePawnsOnBoard = true
-                //     //this.plansza[10].color=div.id
-                //     div.status = "inGame"
-                //     div.position = 10
                 newField = 10
-                // console.log("blue")
             }
             else if (this.me == "green") {
-                // div.style.top = this.plansza[20].y + "px"
-                // div.style.left = this.plansza[20].x + "px"
-                // this.obj.pawns[this.me][index] = 20
-                // //this.oneOrMorePawnsOnBoard = true
-                // // this.plansza[20].color=div.id
-                // div.status = "inGame"
-                // div.position = 20
                 newField = 20
-                //console.log("green")
             }
             else if (this.me == "yellow") {
-                //     div.style.top = this.plansza[30].y + "px"
-                //     div.style.left = this.plansza[30].x + "px"
-                //     this.obj.pawns[this.me][index] = 30
-                //    // this.oneOrMorePawnsOnBoard = true
-                //     // this.plansza[30].color=div.id
-                //     div.status = "inGame"
-                // div.position = 30
                 newField = 30
             }
             else if (this.me == "red") {
-                // div.style.top = this.plansza[0].y + "px"
-                // div.style.left = this.plansza[0].x + "px"
-                // this.obj.pawns[this.me][index] = 0
-                // //this.oneOrMorePawnsOnBoard = true
-                // //this.plansza[0].color=div.id
-                // div.status = "inGame"
-                // div.position = 0
                 newField = 0
             }
             for (let key in this.obj.pawns) {
@@ -522,12 +471,12 @@ export default class Game {
                     for (let pos of this.obj.pawns[key]) {
                         // console.log(pos)
                         if (pos == newField) {
-                            console.log("zbijane bedzie")
+                           // console.log("zbijane bedzie")
                             for (let pawn of this.divs) {
                                 //console.log(pawn.position)
                                 if (pawn.position == pos) {
                                     console.log("----------zbijany------------")
-                                    console.log(pawn)//to jest pion do zbicia
+                                    //console.log(pawn)//to jest pion do zbicia
 
 
                                     if (key == "blue") {
@@ -590,18 +539,17 @@ export default class Game {
 
                                     let id = pawn.id.substr(-1)
                                     //console.log(this.plansza)
-                                    console.log(newHomePosition)
-                                    // console.log(this.plansza[newHomePosition])
+                                   //console.log(newHomePosition)
+                                    //console.log(this.plansza[newHomePosition])
                                     pawn.style.top = this.plansza[newHomePosition].y + "px"
                                     pawn.style.left = this.plansza[newHomePosition].x + "px"
-                                    // console.log(pawn.status+" stary")
+                                    //console.log(pawn.status+" stary")
                                     pawn.status = "inHome"
                                     //console.log(pawn.status+" stary")
-                                    //pawn.position = newHomePosition 
                                     //console.log(pawn.position)
                                     this.obj.pawns[key][id] = newHomePosition
                                     newHomePosition = ""
-                                    console.log("------------zbijany----------")
+                                    //console.log("------------zbijany----------")
                                 }
                             }
                         }
@@ -611,11 +559,8 @@ export default class Game {
             div.style.top = this.plansza[newField].y + "px"
             div.style.left = this.plansza[newField].x + "px"
             this.obj.pawns[this.me][index] = newField
-            // this.oneOrMorePawnsOnBoard = true
-            // this.plansza[30].color=div.id
             div.status = "inGame"
             div.position = newField
-            // newField=30
         }
 
         else if (div.status == "inGame") {
@@ -629,19 +574,18 @@ export default class Game {
                 newField = newField - 39 - 1 //-1 bo tablica od 0
             }
 
-
             for (let key in this.obj.pawns) {
                 if (key != this.me) {
                     //console.log("przeciwnik" + this.obj.pawns[key])
                     for (let pos of this.obj.pawns[key]) {
                         // console.log(pos)
                         if (pos == newField) {
-                            console.log("zbijane bedzie")
+                            //console.log("zbijane bedzie")
                             for (let pawn of this.divs) {
                                 //console.log(pawn.position)
                                 if (pawn.position == pos) {
                                     console.log("----------zbijany------------")
-                                    console.log(pawn)//to jest pion do zbicia
+                                    //console.log(pawn)//to jest pion do zbicia
 
 
                                     if (key == "blue") {
@@ -704,26 +648,23 @@ export default class Game {
 
                                     let id = pawn.id.substr(-1)
                                     //console.log(this.plansza)
-                                    console.log(newHomePosition)
+                                    //console.log(newHomePosition)
                                     // console.log(this.plansza[newHomePosition])
                                     pawn.style.top = this.plansza[newHomePosition].y + "px"
                                     pawn.style.left = this.plansza[newHomePosition].x + "px"
                                     // console.log(pawn.status+" stary")
                                     pawn.status = "inHome"
                                     //console.log(pawn.status+" stary")
-                                    //pawn.position = newHomePosition 
                                     //console.log(pawn.position)
                                     this.obj.pawns[key][id] = newHomePosition
                                     newHomePosition = ""
-                                    console.log("------------zbijany----------")
+                                   // console.log("------------zbijany----------")
                                 }
                             }
                         }
                     }
                 }
             }
-
-
 
             div.style.top = this.plansza[newField].y + "px"
             div.style.left = this.plansza[newField].x + "px"
@@ -732,15 +673,12 @@ export default class Game {
             div.position = newField
         }
 
-
         this.postData('/changeStatus', { obj: this.obj })
             .then(data => {
                 this.changeTure()
-
             });
 
     }
-
 
     generateKostka() {
         let button = document.createElement("button")
@@ -805,7 +743,7 @@ export default class Game {
             let bt = document.getElementById("button")
             bt.remove()
             this.myTurn = true
-        } else if (document.getElementById(this.me + 0).status == "inGame" || document.getElementById(this.me + 1).status == "inGame" || document.getElementById(this.me + 2).status == "inGame" || document.getElementById(this.me + 3).status == "inGame") {
+        } else if (document.getElementById(this.me + 0).status == "inGame" || document.getElementById(this.me + 1).status == "inGame" || document.getElementById(this.me + 2).status == "inGame" || document.getElementById(this.me + 3).status == "inGame") { //jeśli mam coś w grze
             this.wylosowana = move
             let bt = document.getElementById("button")
             this.myTurn = true
@@ -818,7 +756,7 @@ export default class Game {
     }
 
     changeTure() {
-        //console.log("zmiana koljeki")
+        //console.log("zmiana kolejeki")
         this.currentTime = 30
         this.myTurn = false
 
@@ -862,11 +800,10 @@ export default class Game {
                 }
                 if (document.getElementById("kostka") != null) {
                     let kostka = document.getElementById("kostka")
-                    setTimeout(function () {
+                    setTimeout(function () { //usuwamy kostke po 1.5 sekundzie
                         kostka.remove()
                     }, 1500)
                 }
-
             });
     }
 }

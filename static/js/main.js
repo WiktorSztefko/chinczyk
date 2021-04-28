@@ -6,10 +6,11 @@ function init() {
     button.addEventListener("click", () => {
         game.sendLogin()
     })
-    console.log("init")
+    console.log("chińczyk star game")
 }
 
-document.body.addEventListener("load", init())
+//document.body.addEventListener("load", init())
+init()
 
 
 

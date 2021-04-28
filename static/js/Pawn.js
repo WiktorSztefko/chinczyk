@@ -8,13 +8,8 @@ export default class Pawn {
     create() {
 
         let div = document.createElement("div")
-        div.className = "playerNick"
-        div.className = "playerPawn"
-
-        // if (this.key == this.me) {
-        //     div.classList.add("me")
-        // }
-
+       // div.className = "playerNick"
+        //div.className = "playerPawn"
         div.style.width=50+"px"
         div.style.height=50+"px"
         div.style.borderRadius=50+"%"

@@ -4,7 +4,6 @@ export default class User {
         this.nick = nick
         this.status = status
         this.me = me
-
     }
     create() {
 
