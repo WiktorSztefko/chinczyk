@@ -123,7 +123,7 @@ export default class Game {
                 });
             if (this.obj.players[this.me].status == 3) {
                 this.currentTime--
-                //console.log(this.currentTime)
+               // console.log(this.currentTime)
                 if (this.currentTime == 0) {
                     this.changeTure()
                     this.currentTime = 30
@@ -415,7 +415,7 @@ export default class Game {
                 div.addEventListener("click", () => {
 
                     if (this.myTurn == true) {
-                       // console.log(div.status)
+                        // console.log(div.status)
                         if (div.status == "inGame") {
                             this.move(div)
                             // console.log("game")
@@ -451,6 +451,7 @@ export default class Game {
 
         let newField
         let newHomePosition
+        let helper=true
 
         if (div.status == "inHome") {
             if (this.me == "blue") {
@@ -471,43 +472,17 @@ export default class Game {
                     for (let pos of this.obj.pawns[key]) {
                         // console.log(pos)
                         if (pos == newField) {
-                           // console.log("zbijane bedzie")
+                            // console.log("zbijane bedzie")
                             for (let pawn of this.divs) {
                                 //console.log(pawn.position)
-                                if (pawn.position == pos) {
+                                let c=pawn.id
+                                c=c.includes(this.me)
+                               // console.log(c)
+                                if (pawn.position == pos && helper==true && c==false) {
                                     console.log("----------zbijany------------")
                                     //console.log(pawn)//to jest pion do zbicia
 
-
-                                    if (key == "blue") {
-                                        if (this.obj.pawns[key].includes(44) == false) {
-                                            newHomePosition = 44
-                                        }
-                                        else if (this.obj.pawns[key].includes(45) == false) {
-                                            newHomePosition = 45
-                                        }
-                                        else if (this.obj.pawns[key].includes(46) == false) {
-                                            newHomePosition = 46
-                                        }
-                                        else if (!this.obj.pawns[key].includes(47) == false) {
-                                            newHomePosition = 47
-                                        }
-                                    }
-                                    else if (key == "green") {
-                                        if (this.obj.pawns[key].includes(52) == false) {
-                                            newHomePosition = 52
-                                        }
-                                        else if (this.obj.pawns[key].includes(53) == false) {
-                                            newHomePosition = 53
-                                        }
-                                        else if (this.obj.pawns[key].includes(54) == false) {
-                                            newHomePosition = 54
-                                        }
-                                        else if (this.obj.pawns[key].includes(55) == false) {
-                                            newHomePosition = 55
-                                        }
-                                    }
-                                    else if (key == "red") {
+                                    if (key == "red") {
                                         if (this.obj.pawns[key].includes(40) == false) {
                                             newHomePosition = 40
                                         }
@@ -519,6 +494,20 @@ export default class Game {
                                         }
                                         else if (this.obj.pawns[key].includes(43) == false) {
                                             newHomePosition = 43
+                                        }
+                                    }
+                                    else if (key == "blue") {
+                                        if (this.obj.pawns[key].includes(44) == false) {
+                                            newHomePosition = 44
+                                        }
+                                        else if (this.obj.pawns[key].includes(45) == false) {
+                                            newHomePosition = 45
+                                        }
+                                        else if (this.obj.pawns[key].includes(46) == false) {
+                                            newHomePosition = 46
+                                        }
+                                        else if (!this.obj.pawns[key].includes(47) == false) {
+                                            newHomePosition = 47
                                         }
                                     }
                                     else if (key == "yellow") {
@@ -535,20 +524,37 @@ export default class Game {
                                             newHomePosition = 51
                                         }
                                     }
+                                    else if (key == "green") {
+                                        if (this.obj.pawns[key].includes(52) == false) {
+                                            newHomePosition = 52
+                                        }
+                                        else if (this.obj.pawns[key].includes(53) == false) {
+                                            newHomePosition = 53
+                                        }
+                                        else if (this.obj.pawns[key].includes(54) == false) {
+                                            newHomePosition = 54
+                                        }
+                                        else if (this.obj.pawns[key].includes(55) == false) {
+                                            newHomePosition = 55
+                                        }
+                                    }
 
+                                    helper=false
 
                                     let id = pawn.id.substr(-1)
                                     //console.log(this.plansza)
-                                   //console.log(newHomePosition)
+                                    //console.log(newHomePosition)
                                     //console.log(this.plansza[newHomePosition])
+                                   
                                     pawn.style.top = this.plansza[newHomePosition].y + "px"
                                     pawn.style.left = this.plansza[newHomePosition].x + "px"
                                     //console.log(pawn.status+" stary")
                                     pawn.status = "inHome"
+                                    pawn.style.cursor="default"
                                     //console.log(pawn.status+" stary")
                                     //console.log(pawn.position)
                                     this.obj.pawns[key][id] = newHomePosition
-                                    newHomePosition = ""
+                                    //newHomePosition = ""
                                     //console.log("------------zbijany----------")
                                 }
                             }
@@ -569,6 +575,7 @@ export default class Game {
 
             let newField = div.position + this.wylosowana
             let newHomePosition
+            let helper=true
 
             if (newField > 39) {
                 newField = newField - 39 - 1 //-1 bo tablica od 0
@@ -583,7 +590,10 @@ export default class Game {
                             //console.log("zbijane bedzie")
                             for (let pawn of this.divs) {
                                 //console.log(pawn.position)
-                                if (pawn.position == pos) {
+                                let c=pawn.id
+                                c=c.includes(this.me)
+                                //console.log(c)
+                                if (pawn.position == pos && helper==true &&c==false) {
                                     console.log("----------zbijany------------")
                                     //console.log(pawn)//to jest pion do zbicia
 
@@ -645,20 +655,22 @@ export default class Game {
                                         }
                                     }
 
+                                    helper=false
 
                                     let id = pawn.id.substr(-1)
                                     //console.log(this.plansza)
-                                    //console.log(newHomePosition)
+                                    console.log(newHomePosition)
                                     // console.log(this.plansza[newHomePosition])
                                     pawn.style.top = this.plansza[newHomePosition].y + "px"
                                     pawn.style.left = this.plansza[newHomePosition].x + "px"
                                     // console.log(pawn.status+" stary")
                                     pawn.status = "inHome"
+                                    pawn.style.cursor="default"
                                     //console.log(pawn.status+" stary")
                                     //console.log(pawn.position)
                                     this.obj.pawns[key][id] = newHomePosition
-                                    newHomePosition = ""
-                                   // console.log("------------zbijany----------")
+                                    //newHomePosition = ""
+                                    // console.log("------------zbijany----------")
                                 }
                             }
                         }

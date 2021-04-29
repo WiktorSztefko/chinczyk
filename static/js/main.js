@@ -6,7 +6,9 @@ function init() {
     button.addEventListener("click", () => {
         game.sendLogin()
     })
-    console.log("chińczyk star game")
+    console.log("chińczyk start game")
+
+   
 }
 
 //document.body.addEventListener("load", init())
